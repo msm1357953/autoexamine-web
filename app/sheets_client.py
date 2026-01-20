@@ -6,6 +6,8 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 from typing import Optional, Dict, List, Any
 from pathlib import Path
+import os
+import json
 
 from . import config
 
@@ -19,17 +21,27 @@ class SheetsClient:
         self._df_obj_cache: Dict[str, List[pd.DataFrame]] = {}
     
     def _authorize(self) -> gspread.Client:
-        """Google Sheets 인증"""
+        """Google Sheets 인증 (파일 또는 환경변수)"""
         scope = ['https://spreadsheets.google.com/feeds']
         
-        # credentials 폴더에서 JSON 파일 찾기
-        json_files = list(config.CREDENTIALS_DIR.glob("*.json"))
-        if not json_files:
-            raise FileNotFoundError(f"No JSON credentials found in {config.CREDENTIALS_DIR}")
+        # 1. 환경변수에서 credentials 확인
+        credentials_json = os.getenv("GOOGLE_CREDENTIALS")
+        if credentials_json:
+            try:
+                creds_dict = json.loads(credentials_json)
+                credentials = Credentials.from_service_account_info(creds_dict, scopes=scope)
+                return gspread.authorize(credentials)
+            except Exception as e:
+                print(f"Error loading credentials from env: {e}")
         
-        json_file = json_files[0]
-        credentials = Credentials.from_service_account_file(str(json_file), scopes=scope)
-        return gspread.authorize(credentials)
+        # 2. 파일에서 credentials 확인
+        json_files = list(config.CREDENTIALS_DIR.glob("*.json"))
+        if json_files:
+            json_file = json_files[0]
+            credentials = Credentials.from_service_account_file(str(json_file), scopes=scope)
+            return gspread.authorize(credentials)
+        
+        raise FileNotFoundError(f"No JSON credentials found in {config.CREDENTIALS_DIR} and GOOGLE_CREDENTIALS env not set")
     
     def _load_spreadsheet_data(self, url: str, cache_key: str) -> List[pd.DataFrame]:
         """스프레드시트 데이터 로드 (캐싱)"""
