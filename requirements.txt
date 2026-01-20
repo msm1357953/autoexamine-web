@@ -6,7 +6,7 @@ dropbox==11.36.2
 gspread==6.0.0
 google-auth==2.27.0
 python-pptx==0.6.23
-pandas==2.1.4
+pandas>=2.2.0
 python-dotenv==1.0.0
 setuptools
 
