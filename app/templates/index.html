@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>심의자료 자동화</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎯 심의자료 자동화</h1>
+            <p class="subtitle">삼성증권 광고 소재 심의자료 PPT 자동 생성</p>
+        </header>
+
+        <main class="main">
+            <!-- 소재 로딩 섹션 -->
+            <section class="load-section">
+                <button id="loadAllBtn" class="btn btn-secondary">
+                    <span class="btn-text">📂 전체 소재 불러오기</span>
+                    <span class="btn-loading" style="display: none;">
+                        <span class="spinner"></span> 로딩 중...
+                    </span>
+                </button>
+            </section>
+
+            <!-- 필터 섹션 -->
+            <section class="filter-section" id="filterSection" style="display: none;">
+                <div class="filter-group">
+                    <input type="text" id="filterInput" placeholder="소재명 필터 (예: usp-dm-1st)" autocomplete="off">
+                    <div class="filter-actions">
+                        <button id="selectAllBtn" class="btn-small">전체 선택</button>
+                        <button id="deselectAllBtn" class="btn-small">전체 해제</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 소재 목록 섹션 -->
+            <section class="materials-section" id="materialsSection" style="display: none;">
+                <h2>📁 소재 목록 (<span id="selectedCount">0</span>/<span id="totalCount">0</span>개 선택)</h2>
+                <div class="materials-grid" id="materialsGrid"></div>
+            </section>
+
+            <!-- 액션 섹션 -->
+            <section class="action-section" id="actionSection" style="display: none;">
+                <button id="generateBtn" class="btn btn-primary" disabled>
+                    <span class="btn-text">PPT 생성하기</span>
+                    <span class="btn-loading" style="display: none;">
+                        <span class="spinner"></span> 생성 중...
+                    </span>
+                </button>
+            </section>
+
+            <!-- 진행상황 섹션 -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <h3>📊 진행 상황</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <p class="progress-text" id="progressText">준비 중...</p>
+            </section>
+
+            <!-- 상태 메시지 -->
+            <section class="status-section" id="statusSection" style="display: none;">
+                <div class="status-message" id="statusMessage"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 MADUP - 심의자료 자동화 시스템 v2.0</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

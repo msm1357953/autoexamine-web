@@ -1,0 +1,36 @@
+# 환경변수 (민감정보)
+.env
+.env.local
+.env.production
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 로그
+*.log
+
+# 임시 파일
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
