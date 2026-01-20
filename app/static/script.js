@@ -1,16 +1,19 @@
-// 심의자료 자동화 웹 UI 스크립트 v2.1 - SSE 실시간 진행상황
+// 심의자료 자동화 웹 UI 스크립트 v3.0 - 회사 표준 디자인 버전
 
 document.addEventListener('DOMContentLoaded', function () {
     // DOM 요소
     const loadAllBtn = document.getElementById('loadAllBtn');
+    const loadSection = document.getElementById('loadSection');
     const filterSection = document.getElementById('filterSection');
     const filterInput = document.getElementById('filterInput');
     const selectAllBtn = document.getElementById('selectAllBtn');
     const deselectAllBtn = document.getElementById('deselectAllBtn');
-    const materialsSection = document.getElementById('materialsSection');
     const materialsGrid = document.getElementById('materialsGrid');
+    const selectionCount = document.getElementById('selectionCount');
     const selectedCount = document.getElementById('selectedCount');
+    const selectedCount2 = document.getElementById('selectedCount2');
     const totalCount = document.getElementById('totalCount');
+    const selectionInfo = document.getElementById('selectionInfo');
     const actionSection = document.getElementById('actionSection');
     const generateBtn = document.getElementById('generateBtn');
     const progressSection = document.getElementById('progressSection');
@@ -55,16 +58,21 @@ document.addEventListener('DOMContentLoaded', function () {
             allMaterials = data.details;
             displayMaterials(data.materials, data.details);
 
+            // UI 전환
+            loadSection.style.display = 'none';
             filterSection.style.display = 'block';
-            materialsSection.style.display = 'block';
+            materialsGrid.style.display = 'grid';
+            selectionCount.style.display = 'inline';
+            selectionInfo.style.display = 'flex';
             actionSection.style.display = 'block';
 
-            showStatus(`${data.count}개 소재를 불러왔습니다. 생성할 소재를 선택하세요.`, 'success');
+            showStatus(`${data.count}개 소재를 불러왔습니다.`, 'success');
+            setTimeout(() => hideStatus(), 3000);
 
         } catch (error) {
             showStatus(error.message, 'error');
         } finally {
-            btnText.style.display = 'inline';
+            btnText.style.display = 'inline-flex';
             btnLoading.style.display = 'none';
             loadAllBtn.disabled = false;
         }
@@ -82,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             item.innerHTML = `
                 <input type="checkbox" id="mat_${name}" value="${name}">
-                <span class="material-name">${name}</span>
+                <span class="material-name" title="${name}">${name}</span>
                 <span class="material-count">${sizes.length}개</span>
             `;
 
@@ -143,8 +151,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateSelectedCount() {
-        selectedCount.textContent = selectedMaterials.size;
-        generateBtn.disabled = selectedMaterials.size === 0;
+        const count = selectedMaterials.size;
+        selectedCount.textContent = count;
+        selectedCount2.textContent = count;
+        generateBtn.disabled = count === 0;
     }
 
     async function generatePPT() {
@@ -179,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.type === 'progress') {
                     // 진행상황 업데이트
                     progressFill.style.width = `${data.percent}%`;
-                    progressText.textContent = `[${data.step}] ${data.detail || ''} (${data.percent}%)`;
+                    progressText.textContent = `${data.step}: ${data.detail || ''} (${data.percent}%)`;
                 } else if (data.type === 'complete') {
                     // 완료 - 다운로드
                     eventSource.close();
@@ -213,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         function resetButton() {
-            btnText.style.display = 'inline';
+            btnText.style.display = 'inline-flex';
             btnLoading.style.display = 'none';
             generateBtn.disabled = false;
         }

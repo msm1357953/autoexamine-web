@@ -6,71 +6,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>심의자료 자동화</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🎯 심의자료 자동화</h1>
-            <p class="subtitle">삼성증권 광고 소재 심의자료 PPT 자동 생성</p>
-        </header>
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="header-icon">📄</div>
+            <div class="header-content">
+                <h1>심의자료 자동화 시스템</h1>
+                <p>삼성증권 광고 소재의 심의자료 PPT를 자동 생성합니다.</p>
+            </div>
+        </div>
 
-        <main class="main">
-            <!-- 소재 로딩 섹션 -->
-            <section class="load-section">
-                <button id="loadAllBtn" class="btn btn-secondary">
-                    <span class="btn-text">📂 전체 소재 불러오기</span>
-                    <span class="btn-loading" style="display: none;">
-                        <span class="spinner"></span> 로딩 중...
-                    </span>
-                </button>
-            </section>
+        <!-- 소재 선택 카드 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>📁</span>
+                    소재 선택
+                </div>
+                <span class="selection-count" id="selectionCount" style="display: none;">
+                    <strong id="selectedCount">0</strong> / <span id="totalCount">0</span> 선택됨
+                </span>
+            </div>
 
             <!-- 필터 섹션 -->
-            <section class="filter-section" id="filterSection" style="display: none;">
-                <div class="filter-group">
-                    <input type="text" id="filterInput" placeholder="소재명 필터 (예: usp-dm-1st)" autocomplete="off">
-                    <div class="filter-actions">
-                        <button id="selectAllBtn" class="btn-small">전체 선택</button>
-                        <button id="deselectAllBtn" class="btn-small">전체 해제</button>
-                    </div>
+            <div class="filter-section" id="filterSection">
+                <div class="filter-row">
+                    <input type="text" id="filterInput" class="filter-input" placeholder="🔍 소재명으로 검색...">
+                    <button class="filter-btn" id="selectAllBtn">전체 선택</button>
+                    <button class="filter-btn" id="deselectAllBtn">전체 해제</button>
                 </div>
-            </section>
+            </div>
 
-            <!-- 소재 목록 섹션 -->
-            <section class="materials-section" id="materialsSection" style="display: none;">
-                <h2>📁 소재 목록 (<span id="selectedCount">0</span>/<span id="totalCount">0</span>개 선택)</h2>
-                <div class="materials-grid" id="materialsGrid"></div>
-            </section>
+            <div class="card-body">
+                <!-- 로드 섹션 -->
+                <div class="load-section" id="loadSection">
+                    <button id="loadAllBtn" class="load-btn">
+                        <span class="btn-text">📥 전체 소재 불러오기</span>
+                        <span class="btn-loading"><span class="spinner"></span> 불러오는 중...</span>
+                    </button>
+                </div>
 
-            <!-- 액션 섹션 -->
-            <section class="action-section" id="actionSection" style="display: none;">
-                <button id="generateBtn" class="btn btn-primary" disabled>
-                    <span class="btn-text">PPT 생성하기</span>
-                    <span class="btn-loading" style="display: none;">
-                        <span class="spinner"></span> 생성 중...
-                    </span>
+                <!-- 소재 그리드 -->
+                <div class="materials-grid" id="materialsGrid" style="display: none;"></div>
+            </div>
+
+            <!-- 선택 정보 바 -->
+            <div class="selection-info" id="selectionInfo" style="display: none;">
+                <span class="selection-count">
+                    <strong id="selectedCount2">0</strong>개 소재 선택됨
+                </span>
+            </div>
+        </div>
+
+        <!-- 액션 카드 -->
+        <div class="card action-section" id="actionSection">
+            <div class="card-body">
+                <button id="generateBtn" class="generate-btn" disabled>
+                    <span class="btn-text">📊 PPT 생성하기</span>
+                    <span class="btn-loading"><span class="spinner"></span> 생성 중...</span>
                 </button>
-            </section>
+            </div>
+        </div>
 
-            <!-- 진행상황 섹션 -->
-            <section class="progress-section" id="progressSection" style="display: none;">
-                <h3>📊 진행 상황</h3>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        <!-- 진행상황 카드 -->
+        <div class="card progress-section" id="progressSection">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>⏳</span>
+                    생성 진행상황
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressFill"></div>
                 </div>
                 <p class="progress-text" id="progressText">준비 중...</p>
-            </section>
+            </div>
+        </div>
 
-            <!-- 상태 메시지 -->
-            <section class="status-section" id="statusSection" style="display: none;">
-                <div class="status-message" id="statusMessage"></div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <p>© 2026 MADUP - 심의자료 자동화 시스템 v2.0</p>
-        </footer>
+        <!-- 상태 메시지 -->
+        <div class="status-section" id="statusSection">
+            <div class="status-message" id="statusMessage"></div>
+        </div>
     </div>
 
     <script src="/static/script.js"></script>
