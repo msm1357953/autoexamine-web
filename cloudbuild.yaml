@@ -1,0 +1,38 @@
+steps:
+  # Build with Buildpacks
+  - name: 'gcr.io/k8s-skaffold/pack'
+    args:
+      - 'build'
+      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/autoexamine-web:$COMMIT_SHA'
+      - '--builder=gcr.io/buildpacks/builder:latest'
+      - '--path=.'
+    id: 'build'
+
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/autoexamine-web:$COMMIT_SHA'
+    id: 'push'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'autoexamine-web'
+      - '--image=asia-northeast3-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/autoexamine-web:$COMMIT_SHA'
+      - '--region=asia-northeast3'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=1Gi'
+      - '--timeout=300'
+      - '--set-env-vars=DROPBOX_REFRESH_TOKEN=ZWDTQqtw9S0AAAAAAAAAATm5rUisU_CVqrhccLJqR6OyJ-ckvlffAVTSJB-C0dep,DROPBOX_APP_KEY=0tyemk1osl7a0x1,DROPBOX_APP_SECRET=0ltp3dkj081hoos'
+    id: 'deploy'
+
+images:
+  - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/autoexamine-web:$COMMIT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
